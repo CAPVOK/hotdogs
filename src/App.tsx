@@ -1,12 +1,7 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { BasketPage, HomePage, ProductPage, ProductsPage } from "./pages";
-
-export const ROUTES = {
-  HOME: "/home",
-  PRODUCTS: "/home/products",
-  BASKET: "/home/basket",
-}
+import { ROUTES } from "./Routes";
 
 function App() {  
   return (

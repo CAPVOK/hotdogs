@@ -2,7 +2,7 @@ import "./ProductsPage.css";
 import { FC } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { BreadCrumbs } from "../../components/BreadCrumbs";
-import { ROUTES } from "../../App";
+import { ROUTES } from "../../Routes";
 
 export const ProductsPage: FC = () => {
   const location = useLocation();

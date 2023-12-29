@@ -2,7 +2,7 @@
 import { Link, useLocation } from "react-router-dom";
 import "./BreadsCrumb.css";
 import { FC } from "react";
-import { ROUTES } from "../../App";
+import { ROUTES } from "../../Routes";
 import React from "react";
 
 interface BreadCrumbsProps {
@@ -15,7 +15,8 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
   const { pathname } = useLocation(); 
   // pathname = "/home/products/1"
   const crumbs = pathname.split("/").slice(2, name ? -1 : undefined);
-  // pathname.split("/") = ["", "home", "products", "1"]
+  console.log(pathname, crumbs)
+  // pathname.split("/") = ["", "products", "1"]
   // crumbs = ["products"]
 
   const routeLabels = {
@@ -27,7 +28,7 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
   return (
     <ul className="breadcrumbs">
       <li>
-        <Link to="/home">Главная</Link>
+        <Link to={ROUTES.HOME}>Главная</Link>
       </li>
       {!!crumbs.length &&
         crumbs.map((crumb, index) => (
