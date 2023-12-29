@@ -1,39 +1,55 @@
-import { Link } from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Link, useLocation } from "react-router-dom";
 import "./BreadsCrumb.css";
 import { FC } from "react";
-
-interface ICrumb {
-  name: string;
-  path: string;
-}
-
-type BreadCrumbType = string | ICrumb;
+import { ROUTES } from "../../App";
+import React from "react";
 
 interface BreadCrumbsProps {
-  crumbs: BreadCrumbType[];
+  name?: string;
 }
 
 export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
-  const { crumbs } = props;
+  const { name } = props;
+
+  const { pathname } = useLocation(); 
+  // pathname = "/home/products/1"
+  const crumbs = pathname.split("/").slice(2, name ? -1 : undefined);
+  // pathname.split("/") = ["", "home", "products", "1"]
+  // crumbs = ["products"]
+
+  const routeLabels = {
+    home: "Главная",
+    basket: "Корзина",
+    products: "Продукты",
+  };
 
   return (
     <ul className="breadcrumbs">
       <li>
         <Link to="/home">Главная</Link>
       </li>
-      {crumbs.length &&
-        crumbs.map((crumb) => (
-          <>
+      {!!crumbs.length &&
+        crumbs.map((crumb, index) => (
+          <React.Fragment key={index}>
             <li className="slash">/</li>
-            {typeof crumb === "string" ? (
-              <li>{crumb}</li>
+            {index === crumbs.length - 1 && !name ? (
+              <li>{routeLabels[crumb as keyof typeof routeLabels]}</li>
             ) : (
               <li>
-                <Link to={crumb.path}>{crumb.name}</Link>
+                <Link to={ROUTES[crumb.toUpperCase() as keyof typeof ROUTES]}>
+                  {routeLabels[crumb as keyof typeof routeLabels]}
+                </Link>
               </li>
             )}
-          </>
+          </React.Fragment>
         ))}
+      {name && (
+        <>
+          <li className="slash">/</li>
+          <li>{name}</li>
+        </>
+      )}
     </ul>
   );
 };
