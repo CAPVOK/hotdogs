@@ -1,11 +1,15 @@
 import "./HomePage.css";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ROUTES } from "../../App";
 
 export const HomePage: FC = () => {
   const location = useLocation();
   console.log("HomePage", location);
+
+  useEffect(() => {
+    fetch("/api/planet/").then((data) => console.log(data));
+  }, []);
 
   return (
     <div>
