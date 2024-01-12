@@ -1045,6 +1045,71 @@ export default defineConfig({
 
 [Пример развертывания React + Vite][vite-gh-pages]
 
+Для удобства будем использовать библиотеку gh-pages.
+```shell
+npm i gh-pages
+```
+Добавим в `package.json` команду `"deploy": "gh-pages -d dist"`:
+```json
+{
+  "name": "hotdogs",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
+  },
+```
+Для деплоя важно, чтобы в поректе не было ошибок и предупреждений, а так же был правильно настроенный роутинг (предполагается использование react-router-dom).
+#### Пример правильного роутинга:
+```jsx
+import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BasketPage, HomePage, ProductPage, ProductsPage } from "./pages";
+
+function App() {
+  return (
+    <BrowserRouter basename="/RepoName"> {/* RepoName - название репо */}
+      <Routes>
+        <Route path="/" index element={<HomePage />} />
+        <Route path="/basket" element={<BasketPage />} />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/products/:id" element={<ProductPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+```
+
+Так же необходимо указать название репозитория в `vite.config.st`:
+```ts
+export default defineConfig({
+  plugins: [react()],
+  base: "/RepoName",
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, "/"),
+      },
+    },
+  },
+});
+```
+После необходимо собрать проект и использовать ранее добавленный скрипт:
+```shell
+npm run build
+npm deploy
+```
+После проделанных действий ваше приложение станет достпуно по адресу `https://YourGitHubUsername.github.io/RepoName/`, где YourGitHubUsername - ваш гитхаб, RepoName- название репозитория. Ссылку можно найти во вкладке deployments вашего репозитория.
+
 ### Обратите внимание
 
 При развертывании приложения `React` через `GitHub Pages`, ваши `AJAX` запросы будут идти по `http`, в то время как приложение будет доступно по `https`. Работать это будет только при использовании адреса `localhost` в `AJAX` запросах.
