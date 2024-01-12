@@ -15,18 +15,8 @@ export const HomePage: FC = () => {
     <div>
       <h1>Главная</h1>
       <div className="links">
-        <Link
-          to={ROUTES.BASKET}
-          state={{ from: location.state?.from || "" + location.pathname }}
-        >
-          Корзина
-        </Link>
-        <Link
-          to={ROUTES.PRODUCTS}
-          state={{ from: location.state?.from || "" + location.pathname }}
-        >
-          Продукты
-        </Link>
+        <Link to={ROUTES.BASKET}>Корзина</Link>
+        <Link to={ROUTES.PRODUCTS}>Продукты</Link>
       </div>
     </div>
   );

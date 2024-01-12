@@ -10,15 +10,10 @@ export const BasketPage: FC = () => {
 
   return (
     <div>
-      <BreadCrumbs crumbs={[{label: "Корзина", path: "/hotdogs/basket"}]}/>
+      <BreadCrumbs crumbs={[{ label: "Корзина", path: "/basket" }]} />
       <h1>Корзина</h1>
       <div className="products">
-        <Link
-          to={ROUTES.PRODUCTS + "/1"}
-          state={{ from: (location.state?.from || "") + location.pathname }}
-        >
-          Хотдог
-        </Link>
+        <Link to={ROUTES.PRODUCTS + "/1"}>Хотдог</Link>
         <Link to={ROUTES.PRODUCTS + "/2"}>Арбуз</Link>
         <Link to={ROUTES.PRODUCTS + "/3"}>Дыня</Link>
         <Link to={ROUTES.PRODUCTS + "/4"}>Тыква</Link>
