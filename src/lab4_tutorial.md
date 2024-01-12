@@ -1054,15 +1054,13 @@ npm install gh-pages
 Добавим в `package.json` команду `"deploy": "gh-pages -d dist"`:
 ```json
 {
-  "name": "hotdogs",
+  "name": "RepoName",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc &&
-
-vite build",
+    "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
