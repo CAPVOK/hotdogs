@@ -864,9 +864,9 @@ export default ITunesPage
 #### Routes.tsx
 ```ts
 export const ROUTES = {
-  HOME: "/",
-  PRODUCTS: "/products",
-  BASKET: "/basket",
+  home: "/",
+  products: "/products",
+  basket: "/basket",
 }
 export const ROUTE_LABELS = {
   basket: "Корзина",
@@ -898,7 +898,7 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
   return (
     <ul className="breadcrumbs">
       <li>
-        <Link to={ROUTES.HOME}>Главная</Link>
+        <Link to={ROUTES.home}>Главная</Link>
       </li>
       {!!crumbs.length &&
         crumbs.map((crumb, index) => (
@@ -908,7 +908,7 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
               <li>{ROUTE_LABELS[crumb as keyof typeof ROUTE_LABELS]}</li>
             ) : (
               <li>
-                <Link to={ROUTES[crumb.toUpperCase() as keyof typeof ROUTES]}>
+                <Link to={ROUTES[crumb as keyof typeof ROUTES]}>
                   {ROUTE_LABELS[crumb as keyof typeof ROUTE_LABELS]}
                 </Link>
               </li>
