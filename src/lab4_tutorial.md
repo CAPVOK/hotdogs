@@ -962,7 +962,6 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
 ```tsx
 export const ProductsPage: FC = () => {
   const location = useLocation();
-  console.log("ProductsPage", location);
 
   return (
     <div>
@@ -982,7 +981,7 @@ export const ProductsPage: FC = () => {
 ```tsx
 export const ProductPage: FC = () => {
   const location = useLocation();
-  console.log("ProductPage", location);
+  // логика запроса 
 
   return (
     <div>
