@@ -16,13 +16,13 @@ export const HomePage: FC = () => {
       <h1>Главная</h1>
       <div className="links">
         <Link
-          to={ROUTES.BASKET}
+          to={ROUTES.basket}
           state={{ from: location.state?.from || "" + location.pathname }}
         >
           Корзина
         </Link>
         <Link
-          to={ROUTES.PRODUCTS}
+          to={ROUTES.products}
           state={{ from: location.state?.from || "" + location.pathname }}
         >
           Продукты

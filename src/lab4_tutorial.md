@@ -1045,10 +1045,12 @@ export default defineConfig({
 
 [Пример развертывания React + Vite][vite-gh-pages]
 
-Для удобства будем использовать библиотеку gh-pages.
+### Использование библиотеки gh-pages
+Для удобства используем библиотеку gh-pages:
 ```shell
-npm i gh-pages
+npm install gh-pages
 ```
+
 Добавим в `package.json` команду `"deploy": "gh-pages -d dist"`:
 ```json
 {
@@ -1058,22 +1060,29 @@ npm i gh-pages
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc &&
+
+vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
-  },
+  }
+}
 ```
-Для деплоя важно, чтобы в поректе не было ошибок и предупреждений, а так же был правильно настроенный роутинг (предполагается использование react-router-dom).
-#### Пример правильного роутинга:
-```jsx
+
+### Важные аспекты для успешного деплоя
+- Убедитесь, что в проекте нет ошибок и предупреждений.
+- Настройте роутинг корректно, предполагается использование react-router-dom.
+
+#### Пример правильной настройки роутинга:
+```tsx
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BasketPage, HomePage, ProductPage, ProductsPage } from "./pages";
 
 function App() {
   return (
-    <BrowserRouter basename="/RepoName"> {/* RepoName - название репо */}
+    <BrowserRouter basename="/RepoName"> {/* RepoName - название вашего репозитория */}
       <Routes>
         <Route path="/" index element={<HomePage />} />
         <Route path="/basket" element={<BasketPage />} />
@@ -1087,11 +1096,12 @@ function App() {
 export default App;
 ```
 
-Так же необходимо указать название репозитория в `vite.config.st`:
+### Настройка vite.config.ts
+Укажите название вашего репозитория в vite.config.ts:
 ```ts
 export default defineConfig({
   plugins: [react()],
-  base: "/RepoName",
+  base: "/RepoName", // Замените RepoName на имя вашего репозитория
   server: {
     proxy: {
       "/api": {
@@ -1103,12 +1113,14 @@ export default defineConfig({
   },
 });
 ```
-После необходимо собрать проект и использовать ранее добавленный скрипт:
-```shell
+
+### Сборка и развертывание приложения
+Используйте следующие команды для сборки и развертывания вашего приложения:
 npm run build
-npm deploy
-```
-После проделанных действий ваше приложение станет достпуно по адресу `https://YourGitHubUsername.github.io/RepoName/`, где YourGitHubUsername - ваш гитхаб, RepoName- название репозитория. Ссылку можно найти во вкладке deployments вашего репозитория.
+npm run deploy
+
+### Доступ к приложению
+После выполнения этих шагов, ваше приложение будет доступно по адресу https://YourGitHubUsername.github.io/RepoName/, где YourGitHubUsername - ваше имя пользователя на GitHub, а RepoName - название вашего репозитория. Ссылку на приложение можно найти во вкладке "deployments" вашего репозитория.
 
 ### Обратите внимание
 
