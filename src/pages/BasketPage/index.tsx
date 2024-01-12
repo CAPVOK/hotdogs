@@ -10,7 +10,7 @@ export const BasketPage: FC = () => {
 
   return (
     <div>
-      <BreadCrumbs crumbs={[{label: "Корзина", path: "/hotdogs/basket"}]}/>
+      <BreadCrumbs />
       <h1>Корзина</h1>
       <div className="products">
         <Link

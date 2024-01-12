@@ -1,16 +1,17 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BasketPage, HomePage, ProductPage, ProductsPage } from "./pages";
-import { ROUTES } from "./Routes";
 
-function App() {  
+function App() {
   return (
-    <Routes>
-      <Route path={ROUTES.HOME} index element={<HomePage />} />
-      <Route path={ROUTES.BASKET} element={<BasketPage />} />
-      <Route path={ROUTES.PRODUCTS} element={<ProductsPage />} />
-      <Route path={ROUTES.PRODUCTS + "/:id"} element={<ProductPage />} />
-    </Routes>
+    <BrowserRouter basename="/hotdogs"> {/* hotdogs - название репо */}
+      <Routes>
+        <Route path="/" index element={<HomePage />} />
+        <Route path="/basket" element={<BasketPage />} />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/products/:id" element={<ProductPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

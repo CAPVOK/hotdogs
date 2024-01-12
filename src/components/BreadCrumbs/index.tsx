@@ -5,18 +5,18 @@ import { FC } from "react";
 import { ROUTES } from "../../Routes";
 import React from "react";
 
-/* interface BreadCrumbsProps {
+interface BreadCrumbsProps {
   name?: string;
 }
 
 export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
   const { name } = props;
 
-  const { pathname } = useLocation(); 
-  // pathname = "/home/products/1"
-  const crumbs = pathname.split("/").slice(2, name ? -1 : undefined);
-  console.log(pathname, crumbs)
-  // pathname.split("/") = ["", "hotdogs","products", "1"]
+  const { pathname } = useLocation();
+  // pathname = "/products/1"
+  const crumbs = pathname.split("/").slice(1, name ? -1 : undefined);
+  console.log(pathname, crumbs);
+  // pathname.split("/") = ["","products", "1"]
   // crumbs = ["products"]
 
   const routeLabels = {
@@ -50,41 +50,6 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
           <li>{name}</li>
         </>
       )}
-    </ul>
-  );
-}; */
-
-interface ICrumb {
-  label: string;
-  path: string;
-}
-
-interface BreadCrumbsProps {
-  crumbs: ICrumb[];
-}
-
-export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
-  const { crumbs } = props;
-
-  return (
-    <ul className="breadcrumbs">
-      <li>
-        <Link to={ROUTES.HOME}>Главная</Link>
-      </li>
-      {!!crumbs.length &&
-        crumbs.map((crumb, index) => (
-          <React.Fragment key={index}>
-            <li className="slash">/</li>
-
-            {index === crumbs.length - 1 ? (
-              <li>{crumb.label}</li>
-            ) : (
-              <li>
-                <Link to={crumb.path}>{crumb.label}</Link>
-              </li>
-            )}
-          </React.Fragment>
-        ))}
     </ul>
   );
 };
