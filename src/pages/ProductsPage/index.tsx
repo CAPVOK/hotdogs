@@ -13,12 +13,7 @@ export const ProductsPage: FC = () => {
       <BreadCrumbs />
       <h1>Продукты</h1>
       <div className="products">
-        <Link
-          to={ROUTES.PRODUCTS + "/1"}
-          state={{ from: (location.state?.from || "") + location.pathname }}
-        >
-          Хотдог
-        </Link>
+        <Link to={ROUTES.PRODUCTS + "/1"}>Хотдог</Link>
         <Link to={ROUTES.PRODUCTS + "/2"}>Арбуз</Link>
         <Link to={ROUTES.PRODUCTS + "/3"}>Дыня</Link>
         <Link to={ROUTES.PRODUCTS + "/4"}>Тыква</Link>

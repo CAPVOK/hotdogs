@@ -7,6 +7,7 @@
 ## Введение
 
 <!-- TODO: ссылка на установку VM -->
+
 <!-- TODO: ссылка на настройку IDE -->
 
 ### Как жить с API
@@ -142,7 +143,7 @@ cd my-app
 npm install
 ```
 
-После выполнения этих команд у нас будет готовое приложение. "Под капотом" нашего приложения используется язык [Typescript][typescript], библиотека [React][react] и сборщик [Vite][vite].
+После выполнения этих команд у нас будет готовое приложение. "Под капотом" нашего приложения используется язык [Typescript], библиотека [React] и сборщик [Vite].
 
 Для удобства разработки внесем изменения в `vite.config.ts`, чтобы у нас всегда локальный сервер запускался на **3000 порту**.
 
@@ -425,7 +426,7 @@ const Example: FC = () => {
 ```tsx
 useEffect(() => {
   // Этот код выполнится на mount`е компонента
-        
+    
   return () => {
     // Этот код выполнится на unmount`е компонента
   }
@@ -437,7 +438,7 @@ useEffect(() => {
 Хуки налагают два дополнительных правила для разработки:
 
 * Не вызывайте хуки внутри циклов, условий или вложенных функций.
-Они должны выполняться только **на верхнем уровне**.
+  Они должны выполняться только **на верхнем уровне**.
 * Хуки следует вызывать только из функциональных компонентов React и пользовательских хуков.
 
 Пользовательский хук это такая функция JavaScript, внутри которой используются другие хуки. На этот хук распространяются правила хуков, которые описаны ранее.
@@ -540,6 +541,7 @@ npm i react-bootstrap bootstrap
 ```
 
 `bootstrap` необходимо испортировать в файле `main.tsx`
+
 ```tsx
 import 'bootstrap/dist/css/bootstrap.min.css'
 ```
@@ -627,7 +629,7 @@ const ITunesPage: FC = () => {
                         <Card key={index} className="card">
                             <Card.Img className="cardImage" variant="top" src={item.artworkUrl100} height={100} width={100}  />
                             <Card.Body>
-                            
+                        
                             <div className="textStyle">
                                 <Card.Title>{item.artistName}</Card.Title>
                             </div>
@@ -749,7 +751,7 @@ interface Props {
 const MusicCard: FC<Props> = ({ artworkUrl100, artistName, collectionCensoredName, trackViewUrl }) => (
     <Card className="card">
         <Card.Img className="cardImage" variant="top" src={artworkUrl100} height={100} width={100}  />
-        <Card.Body>                
+        <Card.Body>            
             <div className="textStyle">
                 <Card.Title>{artistName}</Card.Title>
             </div>
@@ -858,6 +860,8 @@ export default ITunesPage
 Создадим компонент BreadCrumbs, что будет динамически отображать путь до текущей страницы на основе  URL-адреса. Активная страница (последняя "хлебная крошка") будет выделена другим цветом.
 
 Для удобства создадим объекты ROUTES и ROUTE_LABELS, что соответсвуют страницам приложения и их названиям:
+
+#### Routes.tsx
 ```ts
 export const ROUTES = {
   HOME: "/",
@@ -870,10 +874,10 @@ export const ROUTE_LABELS = {
 };
 ```
 
-#BreadCrumbs.tsx
+#### BreadCrumbs.tsx
 ```tsx
 import { Link, useLocation } from "react-router-dom";
-import "./BreadsCrumb.css";
+import "./BreadCrumbs.css";
 import { FC } from "react";
 import { ROUTES, ROUTE_LABELS } from "../../Routes";
 import React from "react";
@@ -922,7 +926,7 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
 };
 ```
 
-#BreadCrumbs.css
+#### BreadCrumbs.css
 ```css
 :root {
   --active_color: white;
@@ -954,11 +958,50 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
 }
 ```
 
+Пример использования на странице Продуктов:
+```tsx
+export const ProductsPage: FC = () => {
+  const location = useLocation();
+  console.log("ProductsPage", location);
+
+  return (
+    <div>
+      <BreadCrumbs />
+      <h1>Продукты</h1>
+      <div className="products">
+        <Link to={ROUTES.PRODUCTS + "/1"}>Хотдог</Link>
+        <Link to={ROUTES.PRODUCTS + "/2"}>Арбуз</Link>
+        <Link to={ROUTES.PRODUCTS + "/3"}>Дыня</Link>
+        <Link to={ROUTES.PRODUCTS + "/4"}>Тыква</Link>
+      </div>
+    </div>
+  );
+};
+```
+Пример использования на странице продукта (название продукта получаем из запроса и прокидываем в BreadCrumbs как конечную точку):
+```tsx
+export const ProductPage: FC = () => {
+  const location = useLocation();
+  console.log("ProductPage", location);
+
+  return (
+    <div>
+      <BreadCrumbs
+        name="Какой-то хотдог"
+      />
+      <h1>Продукт</h1>
+    </div>
+  );
+};
+```
+
+Такой подход не требует явного указания пути, а определяет его по URL-адресу. В случае необходимости указания последней "крошки" используется пропс name.
+
 ### Подключение к собственному API из web-сервиса
 
 Вернемся к нашему примеру с iTunes. Теперь нам требуется заменить наши запросы `fetch` к сервису iTunes на обращение к нашему сервису `Django` или `Golang`.
 
-## Важный момент. CORS
+## Важный момент. CORS  
 
 У вас возникнет проблема с отображением проекта React с частью, связанной с json'ом, при подключении приложения к вашему веб-сервису.
 
@@ -1050,24 +1093,7 @@ export default BasicExample;
 
 ## Полезные ссылки
 
-* [React][react]
+* [React]
 * [React Router][react-router]
-* [Typescript][typescript]
-* [Vite][vite]
-
-[iu5-javascript]: https://github.com/iu5git/JavaScript
-[react]: https://react.dev
-[react-hooks]: https://react.dev/reference/react
-[react-router]: https://reactrouter.com
-[vite]: https://vitejs.dev
-[vite-proxy]: https://vitejs.dev/config/server-options.html#server-proxy
-[vite-template-project]: https://vitejs.dev/guide/#scaffolding-your-first-vite-project
-[vite-gh-pages]: https://rashidshamloo.hashnode.dev/deploying-vite-react-app-to-github-pages
-[typescript]: https://www.typescriptlang.org/
-[habr-react-diff-class-function-component]: https://habr.com/ru/company/ruvds/blog/444348
-[habr-react-hooks]: https://habr.com/ru/company/ruvds/blog/554280
-[habr-react-jsx]: https://habr.com/ru/articles/319270
-[habr-typescript]: https://habr.com/ru/articles/663964
-[habr-cors1]: https://habr.com/ru/companies/macloud/articles/553826
-[habr-cors2]: https://habr.com/ru/articles/514684
-[chrome-cors-unblock]: https://chrome.google.com/webstore/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino
+* [Typescript]
+* [Vite]
