@@ -995,7 +995,7 @@ export const ProductPage: FC = () => {
 ```
 Такой подход не требует явного указания пути, а определяет его по URL-адресу. В случае необходимости указания последней "крошки" используется пропс name.
 
-### Второй вариант реализации Breadcrumbs
+#### Второй вариант реализации Breadcrumbs
 При данном подходе необходимо указавать все "крошки", текующий URL-адрес не играет роли. Стили остаются теме же:
 ```jsx
 import { Link } from "react-router-dom";
@@ -1042,12 +1042,15 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
 ```jsx
 export const ProductPage: FC = () => {
   const location = useLocation();
-  // логика запроса 
+  console.log("ProductPage", location);
 
   return (
     <div>
       <BreadCrumbs
-        crumbs=[{label: }, {}]
+        crumbs={[
+          { label: "Продукты", path: "/products" },
+          { label: "Хотдог", path: "/products/1" },
+        ]}
       />
       <h1>Продукт</h1>
     </div>
