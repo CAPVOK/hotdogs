@@ -993,8 +993,67 @@ export const ProductPage: FC = () => {
   );
 };
 ```
-
 Такой подход не требует явного указания пути, а определяет его по URL-адресу. В случае необходимости указания последней "крошки" используется пропс name.
+
+### Второй вариант реализации Breadcrumbs
+При данном подходе необходимо указавать все "крошки", текующий URL-адрес не играет роли. Стили остаются теме же:
+```jsx
+import { Link } from "react-router-dom";
+import "./BreadCrumbs.css";
+import { FC } from "react";
+import { ROUTES } from "../../Routes";
+import React from "react";
+
+interface ICrumb {
+  label: string;
+  path: string;
+}
+
+interface BreadCrumbsProps {
+  crumbs: ICrumb[];
+}
+
+export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
+  const { crumbs } = props;
+
+  return (
+    <ul className="breadcrumbs">
+      <li>
+        <Link to={ROUTES.HOME}>Главная</Link>
+      </li>
+      {!!crumbs.length &&
+        crumbs.map((crumb, index) => (
+          <React.Fragment key={index}>
+            <li className="slash">/</li>
+            {index === crumbs.length - 1 ? (
+              <li>{crumb.label}</li>
+            ) : (
+              <li>
+                <Link to={crumb.path}>{crumb.label}</Link>
+              </li>
+            )}
+          </React.Fragment>
+        ))}
+    </ul>
+  );
+};
+```
+Пример использования:
+```jsx
+export const ProductPage: FC = () => {
+  const location = useLocation();
+  // логика запроса 
+
+  return (
+    <div>
+      <BreadCrumbs
+        crumbs=[{label: }, {}]
+      />
+      <h1>Продукт</h1>
+    </div>
+  );
+};
+```
 
 ### Подключение к собственному API из web-сервиса
 
