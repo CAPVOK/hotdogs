@@ -1042,7 +1042,7 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
 ```jsx
 export const ProductPage: FC = () => {
   const location = useLocation();
-  console.log("ProductPage", location);
+  // логика запроса 
 
   return (
     <div>
