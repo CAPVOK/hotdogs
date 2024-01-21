@@ -854,7 +854,7 @@ export default ITunesPage
 
 Для этого создадим файл mock.ts:
 
-modules/mock.ts
+#### modules/mock.ts
 ```ts
   import { ITunesResult } from "./getMusicByName";
 import image from "../../public/smurfcat.jpeg"
@@ -888,7 +888,7 @@ export const SONGS_MOCK: ITunesResult = {
 ```
 Пример использования:
 
-modules/get-music-by-name.ts
+#### modules/get-music-by-name.ts
 ```tsx
 import { SONGS_MOCK } from "./mock"
 
@@ -1078,8 +1078,9 @@ export const SongPage: FC = () => {
     </div>
   );
 };
-
 ```
+![Gif BreadCrumbs](/breadcrumbs.gif)
+
 
 ### Подключение к собственному API из web-сервиса
 
