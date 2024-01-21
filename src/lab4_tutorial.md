@@ -852,6 +852,56 @@ export default ITunesPage
 
 Доработать страницу приложения по вашему варианту. Наполнение данных осуществить через mock-объекты.
 
+Для этого создадим файл mock.ts:
+
+modules/mock.ts
+```ts
+  import { ITunesResult } from "./getMusicByName";
+import image from "../../public/smurfcat.jpeg"
+
+export const SONGS_MOCK: ITunesResult = {
+  resultCount: 3, 
+  results: [
+    {
+      wrapperType: "track",
+      artistName: "VladimirRt5",
+      collectionCensoredName: "Hog mode",
+      trackViewUrl: "",
+      artworkUrl100: image,
+    },
+    {
+      wrapperType: "track",
+      artistName: "Batman Frukt",
+      collectionCensoredName: "Rydovoi Fruktin",
+      trackViewUrl: "",
+      artworkUrl100: image,
+    },
+    {
+      wrapperType: "track",
+      artistName: "MarkBobr",
+      collectionCensoredName: "Sweet Wood",
+      trackViewUrl: "",
+      artworkUrl100: image,
+    },
+  ],
+};
+```
+Пример использования:
+
+modules/get-music-by-name.ts
+```tsx
+import { SONGS_MOCK } from "./mock"
+
+// ....
+
+export const getMusicByName = async (name = ''): Promise<ITunesResult> =>{
+  return fetch(`https://itunes.apple.com/search?term=${name}`)
+      .then((response) => response.json())
+      .catch(()=> (SONGS_MOCK))
+}
+```
+Таким образом в случае ошибки будут пробрасываться наши mock данные
+
 ### Добавить Навигационную цепочку и страницу Подробнее
 
 Добавить страницу Подробнее для просмотра данных о вашем товаре/услуге.
