@@ -1,3 +1,5 @@
+import { SONGS_MOCK } from "./mock"
+
 export interface ITunesMusic {
   wrapperType: string
   artworkUrl100: string
@@ -12,7 +14,7 @@ export interface ITunesResult {
 }
 
 export const getMusicByName = async (name = ''): Promise<ITunesResult> =>{
-  return fetch(`https://itunes.apple.com/search?term=${name}`)
+  return fetch(`https://itunes.apple.commmm/search?term=${name}`)
       .then((response) => response.json())
-      .catch(()=> ({ resultCount:0, results:[] }))
+      .catch(()=> (SONGS_MOCK))
 }
