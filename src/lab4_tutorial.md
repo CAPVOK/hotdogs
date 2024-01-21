@@ -1079,7 +1079,7 @@ export const SongPage: FC = () => {
   );
 };
 ```
-![Gif 4](./breadcrumbs.gif)
+![Gif 4](./assets/breadcrumbs.gif)
 
 
 ### Подключение к собственному API из web-сервиса
