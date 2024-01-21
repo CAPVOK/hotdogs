@@ -1,6 +1,4 @@
-import { BasketPage } from "./BasketPage";
-import { HomePage } from "./HomePage";
-import { ProductsPage } from "./ProductsPage";
-import { ProductPage } from "./ProductPage";
+import { ChartsPage } from "./ChartsPage";
+import { SongPage } from "./SongPage";
 
-export { BasketPage, HomePage, ProductPage, ProductsPage };
+export { SongPage, ChartsPage };

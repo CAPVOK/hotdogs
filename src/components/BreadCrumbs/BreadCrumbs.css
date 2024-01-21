@@ -1,5 +1,5 @@
 :root {
-  --active_color: white;
+  --active_color: black;
   --additional_color: gray;
 }
 
@@ -11,6 +11,8 @@
 
 .breadcrumbs * {
   color: var(--additional_color);
+  font-style: none;
+  text-decoration: none;
   transition: 0.5s;
 }
 

@@ -1,15 +1,15 @@
-import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { BasketPage, HomePage, ProductPage, ProductsPage } from "./pages";
+import { SongPage, ChartsPage } from "./pages";
+import ITunesPage from "./pages/ItunesPage";
+import { ROUTES } from "./Routes";
 
 function App() {
   return (
-    <BrowserRouter basename="/hotdogs"> {/* hotdogs - название репо */}
+    <BrowserRouter>
       <Routes>
-        <Route path="/" index element={<HomePage />} />
-        <Route path="/basket" element={<BasketPage />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/products/:id" element={<ProductPage />} />
+        <Route path={ROUTES.HOME} index element={<ITunesPage />} />
+        <Route path={ROUTES.CHARTS} element={<ChartsPage />} />
+        <Route path={`${ROUTES.CHARTS}/:id`} element={<SongPage />} />
       </Routes>
     </BrowserRouter>
   );

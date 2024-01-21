@@ -1,9 +1,9 @@
-.products {
+.songs {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.products * {
+.songs * {
   font-size: 20px;
 }

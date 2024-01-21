@@ -857,70 +857,61 @@ export default ITunesPage
 Добавить страницу Подробнее для просмотра данных о вашем товаре/услуге.
 
 Для удобной навигации добавим навигационную цепочку `Breadcrumbs`.
-Создадим компонент BreadCrumbs, что будет динамически отображать путь до текущей страницы на основе  URL-адреса. Активная страница (последняя "хлебная крошка") будет выделена другим цветом.
+Создадим компонент BreadCrumbs, что будет отображать путь до текущей страницы на основе  передаваемых параметров. Активная страница (последняя "хлебная крошка") будет выделена другим цветом. При данном подходе необходимо указавать все "крошки", кроме страницы Главная - она отображается всегда.
 
 Для удобства создадим объекты ROUTES и ROUTE_LABELS, что соответсвуют страницам приложения и их названиям:
 
 #### Routes.tsx
 ```ts
 export const ROUTES = {
-  home: "/",
-  products: "/products",
-  basket: "/basket",
+  HOME: "/",
+  CHARTS: "/charts",
 }
-export const ROUTE_LABELS = {
-  basket: "Корзина",
-  products: "Продукты",
+export type RouteKeyType = keyof typeof ROUTES;
+export const ROUTE_LABELS: {[key in RouteKeyType]: string} = {
+  HOME: "Главная",
+  CHARTS: "Чарты",
 };
 ```
 
 #### BreadCrumbs.tsx
 ```tsx
-import { Link, useLocation } from "react-router-dom";
 import "./BreadCrumbs.css";
-import { FC } from "react";
-import { ROUTES, ROUTE_LABELS } from "../../Routes";
 import React from "react";
+import { Link } from "react-router-dom";
+import { FC } from "react";
+import { ROUTES } from "../../Routes";
+
+interface ICrumb {
+  label: string;
+  path?: string;
+}
 
 interface BreadCrumbsProps {
-  name?: string;
+  crumbs: ICrumb[];
 }
 
 export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
-  const { name } = props;
-
-  const { pathname } = useLocation();
-  // pathname = "/products/1"
-  const crumbs = pathname.split("/").slice(1, name ? -1 : undefined);
-  // pathname.split("/") = ["","products", "1"]
-  // crumbs = ["products"]
+  const { crumbs } = props;
 
   return (
     <ul className="breadcrumbs">
       <li>
-        <Link to={ROUTES.home}>Главная</Link>
+        <Link to={ROUTES.HOME}>Главная</Link>
       </li>
       {!!crumbs.length &&
         crumbs.map((crumb, index) => (
           <React.Fragment key={index}>
             <li className="slash">/</li>
-            {index === crumbs.length - 1 && !name ? ( // проверка на полседний элемент
-              <li>{ROUTE_LABELS[crumb as keyof typeof ROUTE_LABELS]}</li>
+            {index === crumbs.length - 1 ? (
+              <li>{crumb.label}</li>
             ) : (
               <li>
-                <Link to={ROUTES[crumb as keyof typeof ROUTES]}>
-                  {ROUTE_LABELS[crumb as keyof typeof ROUTE_LABELS]}
-                </Link>
+                <Link to={crumb.path || ""}>{crumb.label}</Link>
               </li>
             )}
           </React.Fragment>
         ))}
-      {name && (
-        <>
-          <li className="slash">/</li>
-          <li>{name}</li>
-        </>
-      )}
     </ul>
   );
 };
@@ -929,7 +920,7 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
 #### BreadCrumbs.css
 ```css
 :root {
-  --active_color: white;
+  --active_color: black;
   --additional_color: gray;
 }
 
@@ -957,107 +948,88 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
   color: var(--active_color);
 }
 ```
-
-Пример использования на странице Продуктов:
+Добавим в наше приложение страницу чартов и страницу песни. Примерный роутинг:
 ```tsx
-export const ProductsPage: FC = () => {
-  const location = useLocation();
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { SongPage, ChartsPage } from "./pages";
+import ITunesPage from "./pages/ItunesPage";
+import { ROUTES } from "./Routes";
 
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path={ROUTES.HOME} index element={<ITunesPage />} />
+        <Route path={ROUTES.CHARTS} element={<ChartsPage />} />
+        <Route path={`${ROUTES.CHARTS}/:id`} element={<SongPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+```
+
+Пример использования BreadCrumbs на странице чартов:
+```tsx
+import "./ChartsPage.css";
+import { FC } from "react";
+import { Link } from "react-router-dom";
+import { BreadCrumbs } from "../../components/BreadCrumbs";
+import { ROUTES, ROUTE_LABELS } from "../../Routes";
+
+export const ChartsPage: FC = () => {
   return (
     <div>
-      <BreadCrumbs />
-      <h1>Продукты</h1>
-      <div className="products">
-        <Link to={ROUTES.PRODUCTS + "/1"}>Хотдог</Link>
-        <Link to={ROUTES.PRODUCTS + "/2"}>Арбуз</Link>
-        <Link to={ROUTES.PRODUCTS + "/3"}>Дыня</Link>
-        <Link to={ROUTES.PRODUCTS + "/4"}>Тыква</Link>
+      <BreadCrumbs crumbs={[{ label: ROUTE_LABELS.CHARTS }]} />
+      <h1>Чарты</h1>
+      <div className="songs">
+        <Link to={`${ROUTES.CHARTS}/1`}>Норм песня</Link>
+        <Link to={`${ROUTES.CHARTS}/1`}>Крутая песня</Link>
+        <Link to={`${ROUTES.CHARTS}/1`}>Божественная песня</Link>
+        <Link to={`${ROUTES.CHARTS}/1`}>Never Gonna Give You Up</Link>
       </div>
     </div>
   );
 };
 ```
-Пример использования на странице продукта (название продукта получаем из запроса и прокидываем в BreadCrumbs как конечную точку):
+В crumbs указываем только label, так как путь нам не важен, последняя крошка не активна.
+
+Пример использования BreadCrumbs на странице песни (название песни получаем из запроса и прокидываем в BreadCrumbs как конечную точку):
 ```tsx
-export const ProductPage: FC = () => {
-  const location = useLocation();
-  // логика запроса 
-
-  return (
-    <div>
-      <BreadCrumbs
-        name="Какой-то хотдог"
-      />
-      <h1>Продукт</h1>
-    </div>
-  );
-};
-```
-Такой подход не требует явного указания пути, а определяет его по URL-адресу. В случае необходимости указания последней "крошки" используется пропс name.
-
-#### Второй вариант реализации Breadcrumbs
-При данном подходе необходимо указавать все "крошки", текующий URL-адрес не играет роли. Стили остаются теме же:
-```jsx
-import { Link } from "react-router-dom";
-import "./BreadCrumbs.css";
 import { FC } from "react";
-import { ROUTES } from "../../Routes";
-import React from "react";
+import { BreadCrumbs } from "../../components/BreadCrumbs";
+import { ROUTES, ROUTE_LABELS } from "../../Routes";
 
-interface ICrumb {
-  label: string;
-  path: string;
-}
-
-interface BreadCrumbsProps {
-  crumbs: ICrumb[];
-}
-
-export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
-  const { crumbs } = props;
-
-  return (
-    <ul className="breadcrumbs">
-      <li>
-        <Link to={ROUTES.HOME}>Главная</Link>
-      </li>
-      {!!crumbs.length &&
-        crumbs.map((crumb, index) => (
-          <React.Fragment key={index}>
-            <li className="slash">/</li>
-            {index === crumbs.length - 1 ? (
-              <li>{crumb.label}</li>
-            ) : (
-              <li>
-                <Link to={crumb.path}>{crumb.label}</Link>
-              </li>
-            )}
-          </React.Fragment>
-        ))}
-    </ul>
-  );
-};
-```
-Пример использования:
-```jsx
-export const ProductPage: FC = () => {
-  const location = useLocation();
-  console.log("ProductPage", location);
+export const SongPage: FC = () => {
+  // запрос
 
   return (
     <div>
       <BreadCrumbs
         crumbs={[
-          { label: "Продукты", path: "/products" },
-          { label: "Хотдог", path: "/products/1" },
+          { label: ROUTE_LABELS.CHARTS, path: ROUTES.CHARTS },
+          { label: "Never Gonna Give You Up" },
         ]}
       />
-      <h1>Продукт</h1>
+      <h1>Never Gonna Give You Up</h1>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam ipsum
+        qui nihil in blanditiis laudantium a eveniet, sit delectus quia
+        recusandae, porro nostrum. Unde facilis omnis necessitatibus provident
+        tempora eos!
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam ipsum
+        qui nihil in blanditiis laudantium a eveniet, sit delectus quia
+        recusandae, porro nostrum. Unde facilis omnis necessitatibus provident
+        tempora eos!
+      </p>
     </div>
   );
 };
+
 ```
-Второй вариант реализации компонента BreadCrumbs является более гибким, чем первый. Он позволяет более точно контролировать отображение breadcrumbs.
 
 ### Подключение к собственному API из web-сервиса
 
