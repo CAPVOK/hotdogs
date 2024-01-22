@@ -1,9 +1,11 @@
 .songs {
   display: flex;
-  flex-direction: column;
   gap: 15px;
 }
 
 .songs * {
-  font-size: 20px;
+}
+
+.songs > * {
+  width: fit-content;
 }

@@ -1,29 +1,28 @@
 import { ITunesResult } from "./getMusicByName";
-import image from "../../public/smurfcat.jpeg"
 
 export const SONGS_MOCK: ITunesResult = {
   resultCount: 3, 
   results: [
     {
       wrapperType: "track",
-      artistName: "VladimirRt5",
-      collectionCensoredName: "Hog mode",
+      artistName: "Pink Floyd",
+      collectionCensoredName: "The Wall",
       trackViewUrl: "",
-      artworkUrl100: image,
+      artworkUrl100: "",
     },
     {
       wrapperType: "track",
-      artistName: "Batman Frukt",
-      collectionCensoredName: "Rydovoi Fruktin",
+      artistName: "Queen",
+      collectionCensoredName: "A Night At The Opera",
       trackViewUrl: "",
-      artworkUrl100: image,
+      artworkUrl100: "",
     },
     {
       wrapperType: "track",
-      artistName: "MarkBobr",
-      collectionCensoredName: "Sweet Wood",
+      artistName: "AC/DC",
+      collectionCensoredName: "Made in Heaven",
       trackViewUrl: "",
-      artworkUrl100: image,
+      artworkUrl100: "",
     },
   ],
 };

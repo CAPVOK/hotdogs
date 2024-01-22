@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { SongPage, ChartsPage } from "./pages";
+import { AlbumPage, ChartsPage } from "./pages";
 import ITunesPage from "./pages/ItunesPage";
 import { ROUTES } from "./Routes";
 
@@ -8,8 +8,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path={ROUTES.HOME} index element={<ITunesPage />} />
-        <Route path={ROUTES.CHARTS} element={<ChartsPage />} />
-        <Route path={`${ROUTES.CHARTS}/:id`} element={<SongPage />} />
+        <Route path={ROUTES.ALBUMS} element={<ChartsPage />} />
+        <Route path={`${ROUTES.ALBUMS}/:id`} element={<AlbumPage />} />
       </Routes>
     </BrowserRouter>
   );

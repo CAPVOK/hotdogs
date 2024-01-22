@@ -856,35 +856,35 @@ export default ITunesPage
 
 #### modules/mock.ts
 ```ts
-  import { ITunesResult } from "./getMusicByName";
-import image from "../../public/smurfcat.jpeg"
+import { ITunesResult } from "./getMusicByName";
 
 export const SONGS_MOCK: ITunesResult = {
   resultCount: 3, 
   results: [
     {
       wrapperType: "track",
-      artistName: "VladimirRt5",
-      collectionCensoredName: "Hog mode",
+      artistName: "Pink Floyd",
+      collectionCensoredName: "The Wall",
       trackViewUrl: "",
-      artworkUrl100: image,
+      artworkUrl100: "",
     },
     {
       wrapperType: "track",
-      artistName: "Batman Frukt",
-      collectionCensoredName: "Rydovoi Fruktin",
+      artistName: "Queen",
+      collectionCensoredName: "A Night At The Opera",
       trackViewUrl: "",
-      artworkUrl100: image,
+      artworkUrl100: "",
     },
     {
       wrapperType: "track",
-      artistName: "MarkBobr",
-      collectionCensoredName: "Sweet Wood",
+      artistName: "AC/DC",
+      collectionCensoredName: "Made in Heaven",
       trackViewUrl: "",
-      artworkUrl100: image,
+      artworkUrl100: "",
     },
   ],
 };
+
 ```
 Пример использования:
 
@@ -900,7 +900,39 @@ export const getMusicByName = async (name = ''): Promise<ITunesResult> =>{
       .catch(()=> (SONGS_MOCK))
 }
 ```
-Таким образом в случае ошибки будут пробрасываться наши mock данные
+Таким образом в случае ошибки будут пробрасываться наши mock данные. Добавим дефолтное изображение и используем его в MusicCard:
+```jsx
+import { FC } from 'react'
+import { Button, Card } from 'react-bootstrap'
+import "./MusicCard.css"
+import image from "/DefaultImage.jpg";
+
+interface Props {
+    artworkUrl100: string
+    artistName: string
+    collectionCensoredName: string
+    trackViewUrl: string
+}
+
+export const MusicCard: FC<Props> = ({ artworkUrl100, artistName, collectionCensoredName, trackViewUrl }) => (
+    <Card className="card">
+        <Card.Img className="cardImage" variant="top" src={artworkUrl100 || image} height={100} width={100}  />
+        <Card.Body>                
+            <div className="textStyle">
+                <Card.Title>{artistName}</Card.Title>
+            </div>
+            <div className="textStyle">
+                <Card.Text>
+                    {collectionCensoredName}
+                </Card.Text>
+            </div>
+            <Button className="cardButton" href={trackViewUrl} target="_blank" variant="primary">Открыть в ITunes</Button>
+        </Card.Body>
+    </Card>
+)
+```
+Теперь, если изображение не пришло, будет отрисовываться дефолтное.
+
 
 ### Добавить Навигационную цепочку и страницу Подробнее
 
@@ -915,13 +947,35 @@ export const getMusicByName = async (name = ''): Promise<ITunesResult> =>{
 ```ts
 export const ROUTES = {
   HOME: "/",
-  CHARTS: "/charts",
+  ALBUMS: "/albums",
 }
 export type RouteKeyType = keyof typeof ROUTES;
 export const ROUTE_LABELS: {[key in RouteKeyType]: string} = {
   HOME: "Главная",
-  CHARTS: "Чарты",
+  ALBUMS: "Альбомы",
 };
+```
+
+Добавим в наше приложение страницу альбомов и страницу альбома. Примерный роутинг:
+```tsx
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AlbumPage, AlbumsPage } from "./pages";
+import ITunesPage from "./pages/ItunesPage";
+import { ROUTES } from "./Routes";
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path={ROUTES.HOME} index element={<ITunesPage />} />
+        <Route path={ROUTES.ALBUMS} element={<AlbumsPage />} />
+        <Route path={`${ROUTES.ALBUMS}/:id`} element={<AlbumPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
 ```
 
 #### BreadCrumbs.tsx
@@ -978,6 +1032,7 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
   list-style: none;
   display: flex;
   gap: 10px;
+  padding: 20px;
 }
 
 .breadcrumbs * {
@@ -998,88 +1053,87 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
   color: var(--active_color);
 }
 ```
-Добавим в наше приложение страницу чартов и страницу песни. Примерный роутинг:
+
+Пример использования BreadCrumbs на странице альбомов:
 ```tsx
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { SongPage, ChartsPage } from "./pages";
-import ITunesPage from "./pages/ItunesPage";
-import { ROUTES } from "./Routes";
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path={ROUTES.HOME} index element={<ITunesPage />} />
-        <Route path={ROUTES.CHARTS} element={<ChartsPage />} />
-        <Route path={`${ROUTES.CHARTS}/:id`} element={<SongPage />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-export default App;
-```
-
-Пример использования BreadCrumbs на странице чартов:
-```tsx
-import "./ChartsPage.css";
+import "./AlbumsPage.css";
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import { BreadCrumbs } from "../../components/BreadCrumbs";
 import { ROUTES, ROUTE_LABELS } from "../../Routes";
+import { Card, Container } from "react-bootstrap";
+import image from "../../../public/DefaultImage.jpg";
 
-export const ChartsPage: FC = () => {
+export const AlbumsPage: FC = () => {
   return (
     <div>
-      <BreadCrumbs crumbs={[{ label: ROUTE_LABELS.CHARTS }]} />
-      <h1>Чарты</h1>
-      <div className="songs">
-        <Link to={`${ROUTES.CHARTS}/1`}>Норм песня</Link>
-        <Link to={`${ROUTES.CHARTS}/1`}>Крутая песня</Link>
-        <Link to={`${ROUTES.CHARTS}/1`}>Божественная песня</Link>
-        <Link to={`${ROUTES.CHARTS}/1`}>Never Gonna Give You Up</Link>
-      </div>
+      <BreadCrumbs crumbs={[{ label: ROUTE_LABELS.ALBUMS }]} />
+      <Container>
+        <h1>Альбомы</h1>
+        <div className="songs">
+          <Link to={`${ROUTES.ALBUMS}/1`}>
+            <Card className="card">
+              <Card.Img
+                className="cardImage"
+                variant="top"
+                src={image}
+                height={100}
+                width={100}
+              />
+              <Card.Body>
+                <div className="textStyle">
+                  <Card.Title>Made in Heaven</Card.Title>
+                </div>
+                <div className="textStyle">
+                  <Card.Text>AC/DC</Card.Text>
+                </div>
+              </Card.Body>
+            </Card>
+          </Link>
+          {/* ..... */}
+        </div>
+      </Container>
     </div>
   );
 };
+
 ```
 В crumbs указываем только label, так как путь нам не важен, последняя крошка не активна.
 
-Пример использования BreadCrumbs на странице песни (название песни получаем из запроса и прокидываем в BreadCrumbs как конечную точку):
+Пример использования BreadCrumbs на странице альбома (название альбома получаем из запроса и прокидываем в BreadCrumbs как конечную точку):
 ```tsx
 import { FC } from "react";
 import { BreadCrumbs } from "../../components/BreadCrumbs";
 import { ROUTES, ROUTE_LABELS } from "../../Routes";
 
-export const SongPage: FC = () => {
+export const AlbumPage: FC = () => {
   // запрос
 
   return (
     <div>
       <BreadCrumbs
         crumbs={[
-          { label: ROUTE_LABELS.CHARTS, path: ROUTES.CHARTS },
-          { label: "Never Gonna Give You Up" },
+          { label: ROUTE_LABELS.ALBUMS, path: ROUTES.ALBUMS },
+          { label: "Made in Heaven" },
         ]}
       />
-      <h1>Never Gonna Give You Up</h1>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam ipsum
-        qui nihil in blanditiis laudantium a eveniet, sit delectus quia
-        recusandae, porro nostrum. Unde facilis omnis necessitatibus provident
-        tempora eos!
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam ipsum
-        qui nihil in blanditiis laudantium a eveniet, sit delectus quia
-        recusandae, porro nostrum. Unde facilis omnis necessitatibus provident
-        tempora eos!
-      </p>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-8">
+            <h1>Made in Heaven</h1>
+            <p>
+              Made in Heaven — двадцать первый студийный альбом австралийской
+              хард-рок-группы AC/DC...
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
+
 ```
-![Gif 4](./assets/breadcrumbs.gif)
+![Gif 4](./assets/4.gif)
 
 
 ### Подключение к собственному API из web-сервиса

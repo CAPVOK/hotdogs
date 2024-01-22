@@ -14,7 +14,7 @@ export interface ITunesResult {
 }
 
 export const getMusicByName = async (name = ''): Promise<ITunesResult> =>{
-  return fetch(`https://itunes.apple.commmm/search?term=${name}`)
+  return fetch(`https://itunes.apple.comm/search?term=${name}`)
       .then((response) => response.json())
       .catch(()=> (SONGS_MOCK))
 }

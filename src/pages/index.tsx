@@ -1,4 +1,4 @@
 import { ChartsPage } from "./ChartsPage";
-import { SongPage } from "./SongPage";
+import { AlbumPage } from "./SongPage";
 
-export { SongPage, ChartsPage };
+export { AlbumPage, ChartsPage };

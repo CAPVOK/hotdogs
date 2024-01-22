@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { Button, Card } from 'react-bootstrap'
 import "./MusicCard.css"
+import image from "/DefaultImage.jpg";
 
 interface Props {
     artworkUrl100: string
@@ -11,7 +12,7 @@ interface Props {
 
 export const MusicCard: FC<Props> = ({ artworkUrl100, artistName, collectionCensoredName, trackViewUrl }) => (
     <Card className="card">
-        <Card.Img className="cardImage" variant="top" src={artworkUrl100} height={100} width={100}  />
+        <Card.Img className="cardImage" variant="top" src={artworkUrl100 || image} height={100} width={100}  />
         <Card.Body>                
             <div className="textStyle">
                 <Card.Title>{artistName}</Card.Title>
