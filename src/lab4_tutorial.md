@@ -768,7 +768,7 @@ const MusicCard: FC<Props> = ({ artworkUrl100, artistName, collectionCensoredNam
 export default MusicCard;
 ```
 
-### modules/musicApi.ts
+### modules/itunesApi.ts
 
 ```ts
 export interface ITunesMusic {
@@ -796,7 +796,7 @@ export const getMusicByName = async (name = ''): Promise<ITunesResult> =>{
 ```tsx
 import { FC, useState} from 'react'
 import { Col, Row, Spinner } from 'react-bootstrap'
-import { ITunesMusic, getMusicByName } from './modules/musicApi'
+import { ITunesMusic, getMusicByName } from './modules/itunesApi'
 import { InputField } from './components/InputField'
 import { MusicCard } from './components/MusicCard'
 import './ITunesPage.css'
@@ -867,7 +867,7 @@ export const ROUTE_LABELS: {[key in RouteKeyType]: string} = {
   ALBUMS: "Альбомы",
 };
 ```
-Изменим наше приложение: добавим главную страницу, изменим страницу ITunesPage, добавим страницу альбома, сделаем карточку кликабельной, файл get-music-by-name.ts переименуем в itunesApi и добавим в него запрос данных одного альбома по ид.
+Изменим наше приложение: добавим главную страницу, изменим страницу ITunesPage, добавим страницу альбома, сделаем карточку кликабельной, в itunesApi добавим запрос альбома по ид.
 
 #### HomePage
 ```tsx
