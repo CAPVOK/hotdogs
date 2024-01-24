@@ -846,92 +846,6 @@ export default ITunesPage
 
 ## Доработка React приложения по варианту
 
-### Реализовать получение данных из mock-объектов
-
-Доработать страницу приложения по вашему варианту. Наполнение данных осуществить через mock-объекты.
-
-Для этого создадим файл mock.ts:
-
-#### modules/mock.ts
-```ts
-import { ITunesResult } from "./getMusicByName";
-
-export const SONGS_MOCK: ITunesResult = {
-  resultCount: 3, 
-  results: [
-    {
-      wrapperType: "track",
-      artistName: "Pink Floyd",
-      collectionCensoredName: "The Wall",
-      trackViewUrl: "",
-      artworkUrl100: "",
-    },
-    {
-      wrapperType: "track",
-      artistName: "Queen",
-      collectionCensoredName: "A Night At The Opera",
-      trackViewUrl: "",
-      artworkUrl100: "",
-    },
-    {
-      wrapperType: "track",
-      artistName: "AC/DC",
-      collectionCensoredName: "Made in Heaven",
-      trackViewUrl: "",
-      artworkUrl100: "",
-    },
-  ],
-};
-
-```
-Пример использования:
-
-#### modules/get-music-by-name.ts
-```tsx
-import { SONGS_MOCK } from "./mock"
-
-// ....
-
-export const getMusicByName = async (name = ''): Promise<ITunesResult> =>{
-  return fetch(`https://itunes.apple.com/search?term=${name}`)
-      .then((response) => response.json())
-      .catch(()=> (SONGS_MOCK))
-}
-```
-Таким образом в случае ошибки будут пробрасываться наши mock данные. Добавим дефолтное изображение и используем его в MusicCard:
-```jsx
-import { FC } from 'react'
-import { Button, Card } from 'react-bootstrap'
-import "./MusicCard.css"
-import image from "/DefaultImage.jpg";
-
-interface Props {
-    artworkUrl100: string
-    artistName: string
-    collectionCensoredName: string
-    trackViewUrl: string
-}
-
-export const MusicCard: FC<Props> = ({ artworkUrl100, artistName, collectionCensoredName, trackViewUrl }) => (
-    <Card className="card">
-        <Card.Img className="cardImage" variant="top" src={artworkUrl100 || image} height={100} width={100}  />
-        <Card.Body>                
-            <div className="textStyle">
-                <Card.Title>{artistName}</Card.Title>
-            </div>
-            <div className="textStyle">
-                <Card.Text>
-                    {collectionCensoredName}
-                </Card.Text>
-            </div>
-            <Button className="cardButton" href={trackViewUrl} target="_blank" variant="primary">Открыть в ITunes</Button>
-        </Card.Body>
-    </Card>
-)
-```
-Теперь, если изображение не пришло, будет отрисовываться дефолтное.
-
-
 ### Добавить Навигационную цепочку и страницу Подробнее
 
 Добавить страницу Подробнее для просмотра данных о вашем товаре/услуге.
@@ -1065,149 +979,6 @@ export const MusicCard: FC<ICardProps> = ({
 };
 ```
 
-#### ITunesPage
-```tsx
-import "./ITunesPage.css";
-import { FC, useState } from "react";
-import { Col, Row, Spinner } from "react-bootstrap";
-import { ITunesMusic, getMusicByName } from "../../modules/itunesApi";
-import { InputField } from "../../components/InputField";
-import { ROUTES } from "../../Routes";
-import { MusicCard } from "../../components/MusicCard";
-import { useNavigate } from "react-router-dom";
-
-const ITunesPage: FC = () => {
-  const [searchValue, setSearchValue] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [music, setMusic] = useState<ITunesMusic[]>([]);
-
-  const navigate = useNavigate();
-
-  const handleSearch = () => {
-    setLoading(true);
-    getMusicByName(searchValue)
-      .then((response) => {
-        setMusic(
-          response.results.filter((item) => item.wrapperType === "track")
-        );
-        setLoading(false);
-      });
-  };
-  const handleCardClick = (id: number) => {
-    // клик на карточку, переход на страницу альбома
-    navigate(`${ROUTES.ALBUMS}/${id}`);
-  };
-
-  return (
-    <div className="container">
-      <InputField
-        value={searchValue}
-        setValue={(value) => setSearchValue(value)}
-        loading={loading}
-        onSubmit={handleSearch}
-      />
-
-      {loading && ( // здесь можно было использовать тернарный оператор, но это усложняет читаемость
-        <div className="loadingBg">
-          <Spinner animation="border" />
-        </div>
-      )}
-      {!loading &&
-        (!music.length /* Проверка на существование данных */ ? (
-          <div>
-            <h1>К сожалению, пока ничего не найдено :(</h1>
-          </div>
-        ) : (
-          <Row xs={4} md={4} className="g-4">
-            {music.map((item, index) => (
-              <Col key={index}>
-                <MusicCard
-                  imageClickHandler={() => handleCardClick(item.collectionId)}
-                  {...item}
-                />
-              </Col>
-            ))}
-          </Row>
-        ))}
-    </div>
-  );
-};
-
-export default ITunesPage;
-```
-
-#### AlbumPage
-```tsx
-import "./AlbumPage.css";
-import { FC, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { ITunesMusic, getAlbumById } from "../../modules/itunesApi";
-import { Col, Row, Spinner, Image } from "react-bootstrap";
-
-export const AlbumPage: FC = () => {
-  const [pageData, setPageDdata] = useState<ITunesMusic>();
-
-  const { id } = useParams(); // ид страницы, пример: "/albums/12"
-
-  useEffect(() => {
-    if (!id) return;
-    getAlbumById(id)
-      .then((response) => setPageDdata(response.results[0]));
-  }, [id]);
-
-  return (
-    <div>
-      {pageData ? ( // проверка на наличие данных, иначе загрузка
-        <div className="container">
-          <Row>
-            <Col md={6}>
-              <p>
-                Альбом: <strong>{pageData.collectionCensoredName}</strong>
-              </p>
-              <p>
-                Исполнитель: <strong>{pageData.artistName}</strong>
-              </p>
-            </Col>
-            <Col md={6}>
-              <Image
-                src={pageData.artworkUrl100}
-                alt="Картинка"
-                width={100}
-              />
-            </Col>
-          </Row>
-        </div>
-      ) : (
-        <div className="album_page_loader_block">{/* загрузка */}
-          <Spinner animation="border" />
-        </div>
-      )}
-    </div>
-  );
-};
-```
-
-Новый роутинг:
-```tsx
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AlbumPage, AlbumsPage } from "./pages";
-import ITunesPage from "./pages/ItunesPage";
-import { ROUTES } from "./Routes";
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path={ROUTES.HOME} index element={<ITunesPage />} />
-        <Route path={ROUTES.ALBUMS} element={<AlbumsPage />} />
-        <Route path={`${ROUTES.ALBUMS}/:id`} element={<AlbumPage />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-export default App;
-```
 
 #### BreadCrumbs.tsx
 ```tsx
@@ -1286,6 +1057,7 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
 ```
 
 Пример использования BreadCrumbs на странице альбомов (ITunesPage):
+#### ITunesPage
 ```tsx
 import "./ITunesPage.css";
 import { FC, useState } from "react";
@@ -1298,19 +1070,61 @@ import { MusicCard } from "../../components/MusicCard";
 import { useNavigate } from "react-router-dom";
 
 const ITunesPage: FC = () => {
-  // прошлая логика
+  const [searchValue, setSearchValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [music, setMusic] = useState<ITunesMusic[]>([]);
+
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    setLoading(true);
+    getMusicByName(searchValue)
+      .then((response) => {
+        setMusic(
+          response.results.filter((item) => item.wrapperType === "track")
+        );
+        setLoading(false);
+      });
+  };
+  const handleCardClick = (id: number) => {
+    // клик на карточку, переход на страницу альбома
+    navigate(`${ROUTES.ALBUMS}/${id}`);
+  };
+
   return (
     <div className="container">
       <BreadCrumbs crumbs={[{ label: ROUTE_LABELS.ALBUMS }]} />
-
+      
       <InputField
         value={searchValue}
         setValue={(value) => setSearchValue(value)}
         loading={loading}
         onSubmit={handleSearch}
       />
-    /* .... */
-  </div>
+
+      {loading && ( // здесь можно было использовать тернарный оператор, но это усложняет читаемость
+        <div className="loadingBg">
+          <Spinner animation="border" />
+        </div>
+      )}
+      {!loading &&
+        (!music.length /* Проверка на существование данных */ ? (
+          <div>
+            <h1>К сожалению, пока ничего не найдено :(</h1>
+          </div>
+        ) : (
+          <Row xs={4} md={4} className="g-4">
+            {music.map((item, index) => (
+              <Col key={index}>
+                <MusicCard
+                  imageClickHandler={() => handleCardClick(item.collectionId)}
+                  {...item}
+                />
+              </Col>
+            ))}
+          </Row>
+        ))}
+    </div>
   );
 };
 
@@ -1319,6 +1133,7 @@ export default ITunesPage;
 В crumbs указываем только label, так как путь нам не важен, последняя крошка не активна.
 
 Пример использования BreadCrumbs на странице альбома (название альбома получаем из запроса и прокидываем в BreadCrumbs как конечную точку):
+#### AlbumPage
 ```tsx
 import "./AlbumPage.css";
 import { FC, useEffect, useState } from "react";
@@ -1331,7 +1146,16 @@ import { ALBUMS_MOCK } from "../../modules/mock";
 import defaultImage from "/DefaultImage.jpg";
 
 export const AlbumPage: FC = () => {
-  /* та же логика */
+  const [pageData, setPageDdata] = useState<ITunesMusic>();
+
+  const { id } = useParams(); // ид страницы, пример: "/albums/12"
+
+  useEffect(() => {
+    if (!id) return;
+    getAlbumById(id)
+      .then((response) => setPageDdata(response.results[0]));
+  }, [id]);
+
   return (
     <div>
       <BreadCrumbs
@@ -1340,13 +1164,223 @@ export const AlbumPage: FC = () => {
           { label: pageData?.collectionCensoredName || "Альбом" },
         ]}
       />
-      {/* ... */}
+      {pageData ? ( // проверка на наличие данных, иначе загрузка
+        <div className="container">
+          <Row>
+            <Col md={6}>
+              <p>
+                Альбом: <strong>{pageData.collectionCensoredName}</strong>
+              </p>
+              <p>
+                Исполнитель: <strong>{pageData.artistName}</strong>
+              </p>
+            </Col>
+            <Col md={6}>
+              <Image
+                src={pageData.artworkUrl100 || defaultImage} // дефолтное изображение, если нет artworkUrl100
+                alt="Картинка"
+                width={100}
+              />
+            </Col>
+          </Row>
+        </div>
+      ) : (
+        <div className="album_page_loader_block">{/* загрузка */}
+          <Spinner animation="border" />
+        </div>
+      )}
     </div>
   );
 };
 ```
+
+#### AlbumPage.css
+```css
+.album_page_loader_block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+```
+
+Новый роутинг:
+```tsx
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AlbumPage, AlbumsPage } from "./pages";
+import ITunesPage from "./pages/ItunesPage";
+import { ROUTES } from "./Routes";
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path={ROUTES.HOME} index element={<ITunesPage />} />
+        <Route path={ROUTES.ALBUMS} element={<AlbumsPage />} />
+        <Route path={`${ROUTES.ALBUMS}/:id`} element={<AlbumPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+```
+
 ![Gif 4](./assets/4.gif)
 
+### Реализовать получение данных из mock-объектов
+
+Доработать страницу приложения по вашему варианту. Наполнение данных осуществить через mock-объекты.
+
+Для этого создадим файл mock.ts:
+
+#### modules/mock.ts
+```ts
+import { ITunesResult } from "./getMusicByName";
+
+export const SONGS_MOCK: ITunesResult = {
+  resultCount: 3, 
+  results: [
+    {
+      wrapperType: "track",
+      artistName: "Pink Floyd",
+      collectionCensoredName: "The Wall",
+      trackViewUrl: "",
+      artworkUrl100: "",
+    },
+    {
+      wrapperType: "track",
+      artistName: "Queen",
+      collectionCensoredName: "A Night At The Opera",
+      trackViewUrl: "",
+      artworkUrl100: "",
+    },
+    {
+      wrapperType: "track",
+      artistName: "AC/DC",
+      collectionCensoredName: "Made in Heaven",
+      trackViewUrl: "",
+      artworkUrl100: "",
+    },
+  ],
+};
+
+```
+Примеры использования:
+#### ITunesPage
+```tsx
+import "./ITunesPage.css";
+import { FC, useState } from "react";
+import { Col, Row, Spinner } from "react-bootstrap";
+import { ITunesMusic, getMusicByName } from "../../modules/itunesApi";
+import { InputField } from "../../components/InputField";
+import { BreadCrumbs } from "../../components/BreadCrumbs";
+import { ROUTES, ROUTE_LABELS } from "../../Routes";
+import { MusicCard } from "../../components/MusicCard";
+import { useNavigate } from "react-router-dom";
+import { ALBUMS_MOCK } from "../../modules/mock";
+
+const ITunesPage: FC = () => {
+  const [searchValue, setSearchValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [music, setMusic] = useState<ITunesMusic[]>([]);
+
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    setLoading(true);
+    getMusicByName(searchValue)
+      .then((response) => {
+        setMusic(
+          response.results.filter((item) => item.wrapperType === "track")
+        );
+        setLoading(false);
+      })
+      .catch(() => { // В случае ошибки используем mock данные, фильтруем по имени
+        setMusic(
+          ALBUMS_MOCK.results.filter((item) =>
+            item.collectionCensoredName
+              .toLocaleLowerCase()
+              .startsWith(searchValue.toLocaleLowerCase())
+          )
+        );
+        setLoading(false);
+      });
+  };
+
+  // тот же код
+};
+
+export default ITunesPage;
+```
+
+Добавим дефолтное изображение и используем его в MusicCard:
+```jsx
+import { FC } from 'react'
+import { Button, Card } from 'react-bootstrap'
+import "./MusicCard.css"
+import image from "/DefaultImage.jpg";
+
+interface Props {
+    artworkUrl100: string
+    artistName: string
+    collectionCensoredName: string
+    trackViewUrl: string
+}
+
+export const MusicCard: FC<Props> = ({ artworkUrl100, artistName, collectionCensoredName, trackViewUrl }) => (
+    <Card className="card">{/*                          // изображение по умолчанию   */}
+        <Card.Img className="cardImage" variant="top" src={artworkUrl100 || image} height={100} width={100}  />
+        <Card.Body>                
+            <div className="textStyle">
+                <Card.Title>{artistName}</Card.Title>
+            </div>
+            <div className="textStyle">
+                <Card.Text>
+                    {collectionCensoredName}
+                </Card.Text>
+            </div>
+            <Button className="cardButton" href={trackViewUrl} target="_blank" variant="primary">Открыть в ITunes</Button>
+        </Card.Body>
+    </Card>
+)
+```
+Теперь, если изображение не пришло, будет отрисовываться дефолтное.
+
+#### AlbumPage
+```tsx
+import "./AlbumPage.css";
+import { FC, useEffect, useState } from "react";
+import { BreadCrumbs } from "../../components/BreadCrumbs";
+import { ROUTES, ROUTE_LABELS } from "../../Routes";
+import { useParams } from "react-router-dom";
+import { ITunesMusic, getAlbumById } from "../../modules/itunesApi";
+import { Col, Row, Spinner, Image } from "react-bootstrap";
+import { ALBUMS_MOCK } from "../../modules/mock";
+import defaultImage from "/DefaultImage.jpg";
+
+export const AlbumPage: FC = () => {
+  const [pageData, setPageDdata] = useState<ITunesMusic>();
+
+  const { id } = useParams(); // ид страницы, пример: "/albums/12"
+
+  useEffect(() => {
+    if (!id) return;
+    getAlbumById(id)
+      .then((response) => setPageDdata(response.results[0]))
+      .catch(
+        () =>
+          setPageDdata(
+            ALBUMS_MOCK.results.find(
+              (album) => String(album.collectionId) == id
+            )
+          ) /* В случае ошибки используем мок данные, фильтруем по ид */
+      );
+  }, [id]);
+
+ // ....
+};
+```
 
 ### Подключение к собственному API из web-сервиса
 
