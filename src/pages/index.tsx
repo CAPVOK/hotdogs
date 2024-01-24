@@ -1,4 +1,5 @@
-import { ChartsPage } from "./ChartsPage";
-import { AlbumPage } from "./SongPage";
+import { HomePage } from "./HomePage";
+import { AlbumPage } from "./AlbumPage";
+import ITunesPage from "./ItunesPage";
 
-export { AlbumPage, ChartsPage };
+export { AlbumPage, HomePage, ITunesPage };

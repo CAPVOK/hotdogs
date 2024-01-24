@@ -1,35 +1,49 @@
+import "./ITunesPage.css";
 import { FC, useState } from "react";
 import { Col, Row, Spinner } from "react-bootstrap";
 import { ITunesMusic, getMusicByName } from "../../modules/getMusicByName";
 import { InputField } from "../../components/InputField";
+import { BreadCrumbs } from "../../components/BreadCrumbs";
+import { ROUTES, ROUTE_LABELS } from "../../Routes";
 import { MusicCard } from "../../components/MusicCard";
-import "./ITunesPage.css";
-import { ROUTES } from "../../Routes";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { ALBUMS_MOCK } from "../../modules/mock";
 
 const ITunesPage: FC = () => {
   const [searchValue, setSearchValue] = useState("");
-
   const [loading, setLoading] = useState(false);
-
   const [music, setMusic] = useState<ITunesMusic[]>([]);
 
-  const handleSearch = async () => {
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
     setLoading(true);
-    const { results } = await getMusicByName(searchValue);
-    setMusic(results.filter((item) => item.wrapperType === "track"));
-    setLoading(false);
+    getMusicByName(searchValue)
+      .then((response) => {
+        setMusic(
+          response.results.filter((item) => item.wrapperType === "track")
+        );
+        setLoading(false);
+      })
+      .catch(() => {
+        setMusic(
+          ALBUMS_MOCK.results.filter((item) =>
+            item.collectionCensoredName
+              .toLocaleLowerCase()
+              .startsWith(searchValue.toLocaleLowerCase())
+          )
+        );
+        setLoading(false);
+      });
+  };
+  const handleCardClick = (id: number) => {
+    // клик на карточку, переход на страницу альбома
+    navigate(`${ROUTES.ALBUMS}/${id}`);
   };
 
   return (
-    <div className={`container ${loading && "containerLoading"}`}>
-      {loading && (
-        <div className="loadingBg">
-          <Spinner animation="border" />
-        </div>
-      )}
-
-      <Link to={ROUTES.ALBUMS}>К Альбомам</Link>
+    <div className="container">
+      <BreadCrumbs crumbs={[{ label: ROUTE_LABELS.ALBUMS }]} />
 
       <InputField
         value={searchValue}
@@ -38,19 +52,28 @@ const ITunesPage: FC = () => {
         onSubmit={handleSearch}
       />
 
-      {!music.length && (
-        <div>
-          <h1>К сожалению, пока ничего не найдено :(</h1>
+      {loading && ( // здесь можно было использовать тернарный оператор, но это усложняет читаемость
+        <div className="loadingBg">
+          <Spinner animation="border" />
         </div>
       )}
-
-      <Row xs={4} md={4} className="g-4">
-        {music.map((item, index) => (
-          <Col key={index}>
-            <MusicCard {...item} />
-          </Col>
+      {!loading &&
+        (!music.length /* Проверка на существование данных */ ? (
+          <div>
+            <h1>К сожалению, пока ничего не найдено :(</h1>
+          </div>
+        ) : (
+          <Row xs={4} md={4} className="g-4">
+            {music.map((item, index) => (
+              <Col key={index}>
+                <MusicCard
+                  imageClickHandler={() => handleCardClick(item.collectionId)}
+                  {...item}
+                />
+              </Col>
+            ))}
+          </Row>
         ))}
-      </Row>
     </div>
   );
 };

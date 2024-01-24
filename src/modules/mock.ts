@@ -1,9 +1,10 @@
 import { ITunesResult } from "./getMusicByName";
 
-export const SONGS_MOCK: ITunesResult = {
+export const ALBUMS_MOCK: ITunesResult = {
   resultCount: 3, 
   results: [
     {
+      collectionId: 1,
       wrapperType: "track",
       artistName: "Pink Floyd",
       collectionCensoredName: "The Wall",
@@ -11,6 +12,7 @@ export const SONGS_MOCK: ITunesResult = {
       artworkUrl100: "",
     },
     {
+      collectionId: 2,
       wrapperType: "track",
       artistName: "Queen",
       collectionCensoredName: "A Night At The Opera",
@@ -18,6 +20,7 @@ export const SONGS_MOCK: ITunesResult = {
       artworkUrl100: "",
     },
     {
+      collectionId: 3,
       wrapperType: "track",
       artistName: "AC/DC",
       collectionCensoredName: "Made in Heaven",
