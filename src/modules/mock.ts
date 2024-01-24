@@ -1,4 +1,4 @@
-import { ITunesResult } from "./getMusicByName";
+import { ITunesResult } from "./itunesApi";
 
 export const ALBUMS_MOCK: ITunesResult = {
   resultCount: 3, 

@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { BreadCrumbs } from "../../components/BreadCrumbs";
 import { ROUTES, ROUTE_LABELS } from "../../Routes";
 import { useParams } from "react-router-dom";
-import { ITunesMusic, getAlbumById } from "../../modules/getMusicByName";
+import { ITunesMusic, getAlbumById } from "../../modules/itunesApi";
 import { Col, Row, Spinner, Image } from "react-bootstrap";
 import { ALBUMS_MOCK } from "../../modules/mock";
 import defaultImage from "/DefaultImage.jpg";
@@ -56,7 +56,7 @@ export const AlbumPage: FC = () => {
           </Row>
         </div>
       ) : (
-        <div className="album_page_loader_block">
+        <div className="album_page_loader_block">{/* загрузка */}
           <Spinner animation="border" />
         </div>
       )}

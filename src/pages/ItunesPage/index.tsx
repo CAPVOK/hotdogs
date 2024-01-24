@@ -1,7 +1,7 @@
 import "./ITunesPage.css";
 import { FC, useState } from "react";
 import { Col, Row, Spinner } from "react-bootstrap";
-import { ITunesMusic, getMusicByName } from "../../modules/getMusicByName";
+import { ITunesMusic, getMusicByName } from "../../modules/itunesApi";
 import { InputField } from "../../components/InputField";
 import { BreadCrumbs } from "../../components/BreadCrumbs";
 import { ROUTES, ROUTE_LABELS } from "../../Routes";
